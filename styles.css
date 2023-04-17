@@ -1,0 +1,182 @@
+/* styles.css */
+
+/* General styles */
+body {
+font-family: Arial, sans-serif;
+line-height: 1.6;
+color: #333;
+margin: 0;
+padding: 0;
+background-color: #f5f5f5;
+}
+
+.home-page {
+background-image: url('bj1.jpg');
+background-position: center;
+background-repeat: no-repeat;
+background-size: cover;
+background-attachment: fixed;
+}
+
+h1, h2, h3, h4, h5, h6 {
+margin-top: 0;
+margin-bottom: 1rem;
+}
+
+p {
+margin-bottom: 1rem;
+}
+
+a {
+color: #0066cc;
+text-decoration: none;
+}
+
+a:hover {
+color: #003366;
+text-decoration: underline;
+}
+
+/* Header */
+header {
+    background-color: ;
+    color: #fff;
+    padding: 1rem;
+    text-align: center; /* Add this line to center the navigation links */
+}
+
+header nav ul {
+    list-style: none;
+    padding-left: 0;
+    display: inline-block; /* Add this line to make the unordered list inline with the centered text */
+}
+
+header nav ul li {
+    display: inline;
+    margin-right: 1rem;
+}
+
+/* Change the color of navigation links */
+header nav ul li a {
+    color: #000; /* Change the color to black */
+}
+
+header nav ul li a:hover {
+    color: #333; /* Change the hover color */
+    text-decoration: underline;
+}
+
+/* Main content */
+main {
+margin: 2rem;
+}
+
+/* Book */
+.book-content {
+background-color: #fff;
+padding: 2rem;
+max-width: 800px;
+margin: auto;
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Headings */
+.book-content h1,
+.book-content h2,
+.book-content h3 {
+font-family: 'Georgia', serif;
+color: #333;
+margin-bottom: 1.5rem;
+}
+
+/* Paragraphs */
+.book-content p {
+    font-size: 1.1rem;
+    text-align: left;
+    margin-bottom: 2rem; /* Increase the margin-bottom for more space between paragraphs */
+    text-indent: 1.5rem;
+}
+
+/* Lists */
+.book-content ul,
+.book-content ol {
+margin-left: 2rem;
+margin-bottom: 1.5rem;
+}
+
+.book-content li {
+margin-bottom: 0.5rem;
+}
+
+/* Blockquotes */
+.book-content blockquote {
+font-style: italic;
+margin: 1.5rem 2rem;
+padding: 1rem;
+background-color: #f5f5f5;
+border-left: 5px solid #333;
+}
+
+/* Forms and inputs */
+form {
+margin-bottom: 2rem;
+}
+
+label {
+display: block;
+margin-bottom: 0.5rem;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="file"],
+textarea {
+width: 100%;
+margin-bottom: 1rem;
+padding: 0.5rem;
+font-size: 1rem;
+}
+
+input[type="submit"] {
+display: inline-block;
+background-color: #0066cc;
+color: #fff;
+padding: 0.5rem 2rem;
+cursor: pointer;
+border: none;
+font-size: 1rem;
+}
+
+input[type="submit"]:hover {
+background-color: #003366;
+}
+
+/* Video gallery */
+.video-gallery {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+grid-gap: 2rem;
+}
+
+.video {
+text-align: center;
+}
+
+/* Footer */
+footer {
+background-color: #333;
+color: #fff;
+padding: 1rem;
+text-align: center;
+}
+
+footer a {
+bens.w@hotmail.com
+continue
+
+color: #fff;
+}
+
+footer a:hover {
+color: #ccc;
+}
