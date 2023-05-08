@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blackjack Basic Strategy Chart</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+  <h1>Blackjack Basic Strategy Chart</h1>
+  <table>
+    <thead>
+      <tr>
+        <th rowspan="2">Player's Hand</th>
+        <th colspan="10">Dealer's Upcard</th>
+      </tr>
+      <tr>
+        <th>2</th>
+        <th>3</th>
+        <th>4</th>
+        <th>5</th>
+        <th>6</th>
+        <th>7</th>
+        <th>8</th>
+        <th>9</th>
+        <th>10</th>
+        <th>A</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>5 - 8</td>
+        <td>H</td>
+        <td>H</td>
+        <td>H</td>
+        <td>H</td>
+        <td>H</td>
+        <td>H</td>
+        <td>H</td>
+        <td>H</td>
+        <td>H</td>
+        <td>H</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td>H</td>
+        <td>Dh</td>
+        <td>Dh</td>
+        <td>Dh</td>
+        <td>Dh</td>
+        <td>H</td>
+        <td>H</td>
+        <td>H</td>
+        <td>H</td>
+        <td>H</td>
+      </tr>
+      <!-- Add more rows for other player's hands -->
+    </tbody>
+  </table>
+
+  <p><strong>Legend:</strong></p>
+  <ul>
+    <li><strong>H:</strong> Hit</li>
+    <li><strong>S:</strong> Stand</li>
+    <li><strong>Dh:</strong> Double if allowed, otherwise hit</li>
+    <li><strong>Ds:</strong> Double if allowed, otherwise stand</li>
+    <li><strong>Sp:</strong> Split</li>
+  </ul>
+</body>
+</html>
