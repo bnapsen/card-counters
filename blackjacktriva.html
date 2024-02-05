@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Card Counting Trivia Game</title>
+<style>
+    body { 
+        font-family: 'Arial', sans-serif; 
+        margin: 0; 
+        padding: 0;
+        background-image: url('bjbg.webp'); /* Ensure this path is correct */
+        background-size: cover;
+        color: #fff;
+    }
+    .container { 
+        max-width: 800px; 
+        margin: 20px auto; 
+        background-color: rgba(0, 0, 0, 0.75);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .question-header { 
+        font-size: 20px; 
+        margin: 20px 0; 
+    }
+    .options label { 
+        display: block; 
+        background-color: rgba(255, 255, 255, 0.1);
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    .options label:hover,
+    .options input[type="radio"]:checked + label {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+    .options input[type="radio"] {
+        display: none;
+    }
+</style>
+</head>
+<body>
+<div class="container" id="quizContainer">
+    <h1>Advanced Card Counting Trivia Game</h1>
+    <div id="questionContainer"></div>
+</div>
+
+<audio id="correctSound" src="win.mp3"></audio>
+<audio id="wrongSound" src="lose.mp3"></audio>
+
+<script>
+let score = 0; // Initialize score
+const questions = [
+      {
+    question: "What is the effect of removal (EOR) of an Ace in a standard Hi-Lo card counting system?",
+    options: ["Increases the house edge", "Decreases the house edge", "Has no effect on the house edge", "Varies based on the count"],
+    answer: 1 // Decreases the house edge
+},
+{
+    question: "In an 8-deck game, how does the probability of drawing a blackjack change after removing all 5s from the decks compared to removing all Aces?",
+    options: ["Increases more after removing 5s", "Increases more after removing Aces", "Remains unchanged", "Depends on the current count"],
+    answer: 1 // Increases more after removing Aces
+},
+{
+    question: "What advanced technique adjusts the starting count in a shoe game to account for the number of decks in play?",
+    options: ["True count adjustment", "Initial running count adjustment", "Deck estimation", "Back-counting adjustment"],
+    answer: 1 // Initial running count adjustment
+},
+{
+    question: "Which of the following is a key difference between the Red 7 and KO counting systems?",
+    options: ["KO is a balanced system, while Red 7 is unbalanced", "Red 7 counts 7s as neutral, KO counts them as positive", "Red 7 integrates ace adjustment, KO does not", "KO uses a true count conversion, Red 7 does not"],
+    answer: 3 // KO uses a true count conversion, Red 7 does not
+},
+{
+    question: "How does the concept of 'wonging out' differ from 'back-counting'?",
+    options: ["'Wonging out' involves leaving the table at negative counts, while 'back-counting' involves entering a game at positive counts", "'Wonging out' is specific to online play, whereas 'back-counting' is not", "There is no difference; they are synonymous", "'Back-counting' requires team play, 'wonging out' does not"],
+    answer: 0 // 'Wonging out' involves leaving the table at negative counts, while 'back-counting' involves entering a game at positive counts
+},
+{
+    question: "In terms of blackjack strategy, what is the significance of a 'pivot point' in advanced card counting strategies?",
+    options: ["The count at which players should increase their bet", "The count at which the house edge turns in favor of the player", "A specific true count that signals players to adjust their playing strategy", "The moment when players should leave the table"],
+    answer: 2 // A specific true count that signals players to adjust their playing strategy
+},
+{
+    question: "What does the term 'penetration' refer to, and why is it critical in card counting?",
+    options: ["The depth to which the dealer deals into the shoe, critical for the accuracy of count-based betting strategies", "The ability of a player to penetrate the casino's countermeasures against card counters", "The number of decks used in the game, affecting count complexity", "The rate at which cards are played, impacting game speed and count variability"],
+    answer: 0 // The depth to which the dealer deals into the shoe, critical for the accuracy of count-based betting strategies
+},
+{
+    question: "Which mathematical concept is most crucial in optimizing bet sizes in card counting?",
+    options: ["The Kelly Criterion", "The Law of Large Numbers", "Standard deviation", "Poisson distribution"],
+    answer: 0 // The Kelly Criterion
+},
+{
+    question: "How does a 'side count' of Aces improve a card counter's edge in blackjack?",
+    options: ["By providing a more accurate count for betting purposes", "By improving insurance bet decisions", "By indicating when to deviate from basic strategy for hitting or standing", "All of the above"],
+    answer: 3 // All of the above
+},
+      {
+    question: "What basic strategy deviation is recommended when the true count is +3 or higher in a game with S17 rule?",
+    options: ["Stand on 16 vs. dealer's 10", "Double down on 9 vs. dealer's 2", "Take insurance on a good hand", "Split 10s vs. dealer's 5 or 6"],
+    answer: 0 // Stand on 16 vs. dealer's 10
+},
+{
+    question: "In blackjack, why might a player deviate from basic strategy and stand on a soft 18 against a dealer's 9 when the count is high?",
+    options: ["To reduce the risk of busting", "Because the high count indicates more high cards left, reducing the dealer's chances of making a strong hand", "To signal to the dealer they are counting", "To maximize the value of high cards remaining"],
+    answer: 1 // Because the high count indicates more high cards left, reducing the dealer's chances of making a strong hand
+},
+{
+    question: "Which of the following is NOT a factor in determining when to deviate from blackjack basic strategy?",
+    options: ["The player's current bankroll", "The count in card counting systems", "The dealer's upcard", "The player's specific hand"],
+    answer: 0 // The player's current bankroll
+},
+{
+    question: "What does it mean to 'double for less' in blackjack, and why might it be done?",
+    options: ["Doubling down for less than your original bet to conserve bankroll during unfavorable counts", "A mistake; one should never double for less", "Doubling down for less on a likely losing hand to minimize losses", "A deviation used when unsure of the basic strategy"],
+    answer: 0 // Doubling down for less than your original bet to conserve bankroll during unfavorable counts
+},
+{
+    question: "Why would a player decide to split 10s when basic strategy advises against it?",
+    options: ["As a bluff to confuse the dealer", "In a high true count situation against a weak dealer card to maximize profits", "When the player is not confident in their basic strategy knowledge", "To reduce the risk of busting on a strong hand"],
+    answer: 1 // In a high true count situation against a weak dealer card to maximize profits
+},
+{
+    question: "Under what circumstance is taking insurance considered a smart play?",
+    options: ["When the player has a blackjack", "When the true count is +3 or higher", "Always, as it protects against dealer blackjack", "Never, it's always a bad bet"],
+    answer: 1 // When the true count is +3 or higher
+},
+{
+    question: "What is the primary reason for a player to stand on a 12 against a dealer's 2 or 3 when the count is extremely negative?",
+    options: ["The likelihood of busting is too high", "The count suggests a higher chance of the dealer busting", "Standing on 12 is always the correct basic strategy", "To avoid drawing attention as a card counter"],
+    answer: 1 // The count suggests a higher chance of the dealer busting
+},
+{
+    question: "In a single-deck game, how does a player's decision to hit or stand on a soft 17 change?",
+    options: ["Always hit, as single-deck games favor the player", "Stand if the true count is negative", "Hit against a dealer's 7 or higher, regardless of the count", "Stand, since single-deck games have better odds for standing"],
+    answer: 2 // Hit against a dealer's 7 or higher, regardless of the count
+},
+{
+    question: "Why is it advised to sometimes deviate from the 'never bust' strategy and hit on a 12 against a dealer's 4 when the count is high?",
+    options: ["Because a high count increases the chance of getting a low card", "To align with aggressive betting strategies", "Because it's statistically more likely to win the hand", "It's a trick question; this deviation is never advised"],
+    answer: 0 // Because a high count increases the chance of getting a low card
+},
+      {
+    question: "What term describes the act of adjusting bets based on the remaining composition of the deck(s)?",
+    options: ["Bet spreading", "Card clumping", "Deck density", "True counting"],
+    answer: 0 // Bet spreading
+},
+{
+    question: "Which of the following is a sign of a card counter to casino surveillance?",
+    options: ["Staying at a table for just one shoe", "Making large jumps in bet size when the count is favorable", "Using basic strategy for every hand", "Tipping the dealer"],
+    answer: 1 // Making large jumps in bet size when the count is favorable
+},
+{
+    question: "What does it mean to 'burn a card' in blackjack?",
+    options: ["To remove a card from play", "To count cards backwards", "To mark a card for tracking", "To intentionally lose a hand"],
+    answer: 0 // To remove a card from play
+},
+{
+    question: "In blackjack, which of the following hands is considered a 'stiff hand'?",
+    options: ["A hand totaling 12 to 16", "Any hand with an Ace counted as 11", "A hand totaling 17 or more", "A pair of 8s"],
+    answer: 0 // A hand totaling 12 to 16
+},
+{
+    question: "What is the main disadvantage of the Martingale betting system?",
+    options: ["It requires a large bankroll", "It only works with even money bets", "Casinos easily detect it", "It decreases the house edge"],
+    answer: 0 // It requires a large bankroll
+},
+{
+    question: "Which blackjack rule variation is most favorable to the player?",
+    options: ["Dealer hits on soft 17", "Blackjack pays 6 to 5", "The ability to double down after splitting", "No surrender option"],
+    answer: 2 // The ability to double down after splitting
+},
+{
+    question: "What does the 'house edge' represent in blackjack?",
+    options: ["The dealer's advantage over the player", "The player's advantage over the dealer", "The likelihood of drawing a blackjack", "The casino's profit margin"],
+    answer: 0 // The dealer's advantage over the player
+},
+{
+    question: "What is a 'hole card'?",
+    options: ["A card dealt face down to the dealer", "A card removed from the deck by the casino", "The first card dealt to each player", "A card that completes a blackjack"],
+    answer: 0 // A card dealt face down to the dealer
+},
+{
+    question: "In card counting, what is meant by the 'running count'?",
+    options: ["The total value of cards dealt", "The count adjusted for the number of decks remaining", "The cumulative count of the deck's value as cards are seen", "The final count at the end of a shoe"],
+    answer: 2 // The cumulative count of the deck's value as cards are seen
+},
+     {
+    question: "Which betting strategy adjusts bets based on previous wins or losses, aiming to 'lock in' profits?",
+    options: ["Martingale", "Paroli", "Kelly Criterion", "D'Alembert"],
+    answer: 1 // Paroli
+},
+{
+    question: "In blackjack strategy, what does 'ROR' stand for?",
+    options: ["Rate of Return", "Risk of Ruin", "Range of Rates", "Return on Risk"],
+    answer: 1 // Risk of Ruin
+},
+{
+    question: "What aspect does the 'Illustrious 18' primarily focus on?",
+    options: ["Bet sizing", "Insurance decisions", "Deviations from basic strategy based on the count", "Identifying dealer tells"],
+    answer: 2 // Deviations from basic strategy based on the count
+},
+{
+    question: "Which of the following is NOT a common feature of Advanced Omega II system?",
+    options: ["Multi-level counting", "Asymmetrical card values", "Separate count for Aces", "Using a true count for all decisions"],
+    answer: 1 // Asymmetrical card values
+},
+{
+    question: "How does 'team play' in card counting typically handle bet sizing?",
+    options: ["All team members bet the same amount", "Bet sizes are based on the individual player's count", "The 'big player' adjusts bets based on signals from spotters", "Bet sizes are randomly chosen to avoid detection"],
+    answer: 2 // The 'big player' adjusts bets based on signals from spotters
+},
+{
+    question: "What does the concept of 'wonging' avoid?",
+    options: ["Playing hands at all", "Betting on negative counts", "Interacting with casino staff", "Using basic strategy"],
+    answer: 1 // Betting on negative counts
+},
+{
+    question: "In the context of blackjack, what is a 'heat'?",
+    options: ["The pressure or scrutiny from casino personnel", "A streak of winning hands", "The ambient temperature of the casino, affecting shuffle machines", "A technique to confuse card counters"],
+    answer: 0 // The pressure or scrutiny from casino personnel
+},
+{
+    question: "What is the primary purpose of shuffle tracking?",
+    options: ["To predict the sequence of cards in the next deal", "To identify the dealer's shuffle pattern", "To determine the likelihood of aces being dealt", "To track high cards through the shuffle to gain an edge"],
+    answer: 3 // To track high cards through the shuffle to gain an edge
+},
+{
+    question: "Which scenario best represents a 'neutral deck' in blackjack?",
+    options: ["An equal number of high and low cards remaining in the shoe", "No cards have been dealt yet", "The count is highly positive", "The dealer has a high chance of busting"],
+    answer: 0 // An equal number of high and low cards remaining in the shoe
+},
+     {
+        question: "Which card counting system assigns a value of +2 to 2s and 7s, and -2 to Aces and 10s?",
+        options: ["Hi-Lo", "KO", "Omega II", "Red 7"],
+        answer: 2 // Omega II
+    },
+    {
+        question: "What does the term 'Insurance Efficiency' measure in a card counting system?",
+        options: ["The accuracy of insurance bet decisions", "The overall effectiveness of the system", "How efficiently the system counts Aces", "The speed of counting"],
+        answer: 0 // The accuracy of insurance bet decisions
+    },
+    {
+        question: "In the context of blackjack, what is 'Ace Sequencing' or 'Ace Steering'?",
+        options: ["A technique to predict when an Ace will be dealt", "A method to decide when to hit or stand", "A way to count Aces separately", "The process of removing Aces from the deck"],
+        answer: 0 // A technique to predict when an Ace will be dealt
+    },
+    {
+        question: "Which of the following is NOT a purpose of a 'true count' in card counting?",
+        options: ["Adjusting the running count for decks remaining", "Determining the size of the next bet", "Identifying the player's edge over the house", "Predicting the exact card that will be dealt next"],
+        answer: 3 // Predicting the exact card that will be dealt next
+    },
+    {
+        question: "What strategy involves increasing the bet after every loss?",
+        options: ["Card counting", "Martingale", "Insurance betting", "Splitting tens"],
+        answer: 1 // Martingale
+    },
+    {
+        question: "Which card counting system uses a balanced count strategy starting and ending at zero?",
+        options: ["Hi-Opt I", "Hi-Lo", "KO", "Red 7"],
+        answer: 1 // Hi-Lo
+    },
+    {
+        question: "How does the 'KO' (Knock-Out) system differ from most other counting systems?",
+        options: ["It uses fractional counts", "It does not require a conversion to a true count", "It counts only Aces and fives", "It resets the count at every shuffle"],
+        answer: 1 // It does not require a conversion to a true count
+    },
+    {
+        question: "What is a common adjustment made to the count in multi-deck games to account for the number of decks?",
+        options: ["Increasing the count by one per deck", "Dividing the running count by the number of decks remaining", "Multiplying the count by the number of decks", "No adjustment is needed"],
+        answer: 1 // Dividing the running count by the number of decks remaining
+    },
+    {
+        question: "What does a negative count signify in most card counting strategies?",
+        options: ["More high cards are remaining", "More low cards are remaining", "The deck is perfectly balanced", "The game is over"],
+        answer: 1 // More low cards are remaining
+    },
+     {
+        question: "What is the primary goal of card counting in blackjack?",
+        options: ["To know when the deck is rich in aces and 10s", "To memorize the cards played", "To cheat the casino", "To predict the exact card to be dealt next"],
+        answer: 0
+    },
+    {
+        question: "Which of the following statements about card counting is TRUE?",
+        options: ["It guarantees wins in every hand", "It's illegal in all casinos", "It requires a photographic memory", "It gives a statistical edge over the casino"],
+        answer: 3
+    },
+    {
+        question: "In the Hi-Lo card counting system, what value is assigned to cards 2 through 6?",
+        options: ["0", "+1", "-1", "+2"],
+        answer: 1
+    },
+    {
+        question: "What does a 'positive count' indicate in blackjack card counting?",
+        options: ["More low cards remain in the deck", "The dealer has an advantage", "More high cards remain in the deck", "The game is rigged"],
+        answer: 2
+    },
+    {
+        question: "Which of the following is a technique used to disguise card counting efforts?",
+        options: ["Betting the same amount every hand", "Using hand signals instead of speaking", "Varying bets in a seemingly random manner", "Counting cards backwards"],
+        answer: 2
+    },
+    {
+        question: "What is the purpose of the 'true count' in blackjack card counting?",
+        options: ["To adjust the running count based on the number of decks remaining", "To confuse the casino surveillance team", "To calculate the exact odds of winning each hand", "To determine the speed of the dealer"],
+        answer: 0
+    },
+    {
+        question: "Which card counting system is known for its simplicity and ease of use for beginners?",
+        options: ["Hi-Lo", "KO (Knock-Out)", "Omega II", "Wong Halves"],
+        answer: 1
+    },
+    {
+        question: "How do casinos typically respond to suspected card counters?",
+        options: ["Offer them a job", "Teach them more advanced strategies", "Ask them to leave or refuse their bets", "Ignore them as card counting is not effective"],
+        answer: 2
+    },
+    {
+        question: "What does 'deck penetration' refer to in the context of card counting?",
+        options: ["The depth to which a dealer deals into the shoe before reshuffling", "The number of decks used in the game", "The technique of inserting a cut card into the deck", "A strategy to determine the count without seeing the cards"],
+        answer: 0
+    },
+    {
+        question: "What is the primary goal of card counting in blackjack?",
+        options: ["To know when the deck is rich in aces and 10s", "To memorize the cards played", "To cheat the casino", "To predict the exact card to be dealt next"],
+        answer: 0
+    },
+    {
+        question: "Which of the following statements about card counting is TRUE?",
+        options: ["It guarantees wins in every hand", "It's illegal in all casinos", "It requires a photographic memory", "It gives a statistical edge over the casino"],
+        answer: 3
+    },
+    {
+        question: "In the Hi-Lo card counting system, what value is assigned to cards 2 through 6?",
+        options: ["0", "+1", "-1", "+2"],
+        answer: 1
+    },
+    // Add your remaining questions here
+];
+
+function shuffleQuestions(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+function displayQuestion(questionIndex) {
+    const questionContainer = document.getElementById('questionContainer');
+    questionContainer.innerHTML = ''; 
+
+    if (questionIndex < questions.length) {
+        const q = questions[questionIndex];
+        const questionDiv = document.createElement('div');
+        questionDiv.innerHTML = `<div class="question-header">Question ${questionIndex + 1}: ${q.question}</div>`;
+        
+        const optionsDiv = document.createElement('div');
+        optionsDiv.classList.add('options');
+        
+        q.options.forEach((option, i) => {
+            const input = document.createElement('input');
+            input.type = 'radio';
+            input.id = `option${i}_${questionIndex}`;
+            input.name = `question${questionIndex}`;
+            input.value = i;
+            
+            const label = document.createElement('label');
+            label.htmlFor = `option${i}_${questionIndex}`;
+            label.textContent = option;
+            
+            input.onchange = () => {
+                if(i === q.answer) {
+                    document.getElementById('correctSound').play();
+                    score++;
+                } else {
+                    document.getElementById('wrongSound').play();
+                }
+                if(questionIndex < questions.length - 1) {
+                    setTimeout(() => displayQuestion(++currentQuestionIndex), 500);
+                } else {
+                    const blackjackIQ = Math.round((score / questions.length) * 100);
+                    questionContainer.innerHTML = `<h2>Game Over! Your Blackjack IQ is: ${blackjackIQ}.</h2>`;
+                }
+            };
+            
+            optionsDiv.appendChild(input);
+            optionsDiv.appendChild(label);
+        });
+        
+        questionDiv.appendChild(optionsDiv);
+        questionContainer.appendChild(questionDiv);
+    }
+}
+
+let currentQuestionIndex = 0;
+shuffleQuestions(questions);
+window.onload = () => displayQuestion(currentQuestionIndex);
+</script>
+</body>
+</html>
