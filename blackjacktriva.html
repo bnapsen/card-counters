@@ -13,6 +13,29 @@
         background-size: cover;
         color: #fff;
     }
+    header {
+        background-color: ;
+        color: #79060a;
+        padding: 1rem;
+        text-align: center; /* Add this line to center the navigation links */
+    }
+    header nav ul {
+        list-style: none;
+        padding-left: 0;
+        display: inline-block; /* Add this line to make the unordered list inline with the centered text */
+    }
+    header nav ul li {
+        display: inline;
+        margin-right: 1rem;
+    }
+    /* Change the color of navigation links */
+    header nav ul li a {
+        color: #79060a; /* Change the color to black */
+    }
+    header nav ul li a:hover {
+        color: #333; /* Change the hover color */
+        text-decoration: underline;
+    }
     .container { 
         max-width: 800px; 
         margin: 20px auto; 
@@ -44,6 +67,18 @@
 </style>
 </head>
 <body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="book.html">Book</a></li>
+                <li><a href="videos.html">Videos</a></li>
+                <li><a href="tools.html">Tools &amp; Resources</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="KELLY.html">Optimal bet calculator</a></li>
+                <li><a href="blackjacktriva.html">Card Counting Triva Game</a></li>
+            </ul>
+        </nav>
+    </header>
 <div class="container" id="quizContainer">
     <h1>Advanced Card Counting Trivia Game</h1>
     <div id="questionContainer"></div>
@@ -354,7 +389,7 @@ function displayQuestion(questionIndex) {
     const questionContainer = document.getElementById('questionContainer');
     questionContainer.innerHTML = ''; 
 
-    if (questionIndex < questions.length) {
+    if (questionIndex < 10) {
         const q = questions[questionIndex];
         const questionDiv = document.createElement('div');
         questionDiv.innerHTML = `<div class="question-header">Question ${questionIndex + 1}: ${q.question}</div>`;
@@ -380,10 +415,10 @@ function displayQuestion(questionIndex) {
                 } else {
                     document.getElementById('wrongSound').play();
                 }
-                if(questionIndex < questions.length - 1) {
+                if(questionIndex < 10 - 1) {
                     setTimeout(() => displayQuestion(++currentQuestionIndex), 500);
                 } else {
-                    const blackjackIQ = Math.round((score / questions.length) * 100);
+                    const blackjackIQ = Math.round((score / 10) * 100);
                     questionContainer.innerHTML = `<h2>Game Over! Your Blackjack IQ is: ${blackjackIQ}.</h2>`;
                 }
             };
