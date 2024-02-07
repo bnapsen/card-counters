@@ -197,17 +197,22 @@ document.getElementById('deal-button').addEventListener('click', function() {
     dealCard(dealerHand);
     displayHand('player-hand', playerHand);
     displayHand('dealer-hand', dealerHand, true); // Hide dealer's second card
-    if (calculateScore(playerHand) == 21) {
-        gameState = "ended";
-        message = "Blackjack!";
-        document.getElementById('status-message').textContent = message;
-        bankroll += currentBet * 2.5;
-    }
     document.getElementById('hit-button').disabled = false;
     document.getElementById('stand-button').disabled = false;
     document.getElementById('double-down-button').disabled = playerHand.length !== 2 || currentBet > bankroll;
     document.getElementById('split-button').disabled = playerHand[0].value !== playerHand[1].value || playerHand.length !== 2 || currentBet > bankroll;
     document.getElementById('deal-button').disabled = true;
+    if (calculateScore(playerHand) == 21) {
+        gameState = "ended";
+        message = "Blackjack!";
+        document.getElementById('status-message').textContent = message;
+        bankroll += currentBet * 2.5;
+        document.getElementById('hit-button').disabled = true;
+        document.getElementById('stand-button').disabled = true;
+        document.getElementById('double-down-button').disabled = true;
+        document.getElementById('split-button').disabled = true;
+        document.getElementById('deal-button').disabled = true;
+    }
 });
 
 // Player Hits
