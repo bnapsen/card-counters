@@ -251,6 +251,9 @@ function endGame(message = "") {
     if (!message) {
         if (playerScore > 21) {
             message = "Player busts!";
+        if (playerScore == 21) {
+            message = "Blackjack!";
+            bankroll += currentBet * 2.5;
         } else if (dealerScore > 21 || playerScore > dealerScore) {
             message = "Player wins!";
             bankroll += currentBet * 2;
