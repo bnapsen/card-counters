@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Complete Blackjack Game</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #00796B;
+            color: #FFFFFF;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            background-image: url('bgimi.webp'); /* Update with your image path */
+            background-size: cover;
+            background-position: center;
+        }
+        .game-area {
+            background: rgba(0, 0, 0, 0.75);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 800px;
+            margin: 20px auto;
+        }
+        .hand {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .card {
+            background-color: #FFFFFF;
+            color: #333;
+            border-radius: 10px;
+            margin: 5px;
+            padding: 10px;
+            display: inline-block;
+            width: 80px;
+            height: 120px;
+            line-height: 120px;
+            text-align: top;
+            position: relative;
+            font-size: 10px;
+        }
+        .card.back {
+            background-color: #666;
+        }
+        .controls button {
+            background-color: #FFC107;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .controls button:disabled {
+            background-color: #BDBDBD;
+            cursor: not-allowed;
+        }
+        .betting-controls, .count-display {
+            margin-bottom: 40px;
+        }
+        .count-display {
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-area">
+        <h1>Blackjack Game</h1>
+        <div id="bankroll-display">Bankroll: $1000</div>
+        <div class="betting-controls">
+            <input type="number" id="bet-amount" value="100" min="10" step="10">
+            <button id="place-bet-button">Place Bet</button>
+        </div>
+        <div id="dealer-hand" class="hand"></div>
+        <div id="player-hand" class="hand"></div>
+        <div class="controls">
+            <button id="deal-button" disabled>Deal</button>
+            <button id="hit-button" disabled>Hit</button>
+            <button id="stand-button" disabled>Stand</button>
+            <button id="double-down-button" disabled>Double Down</button>
+            <button id="split-button" disabled>Split</button>
+            <button id="restart-button" style="display: none;">Restart</button>
+        </div>
+        <div id="status-message"></div>
+        <div id="count-display" class="count-display">Hi-Lo Count: 0</div>
+    </div>
+
+    <script>
+        let deck = [], playerHand = [], dealerHand = [];
+        let bankroll = 1000, currentBet = 0, hiLoCount = 0, decks = 6, cardsDealt = 0;
+        let gameState = "placingBet";
+
+        function createShoe(decks) {
+            const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
+            const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace'];
+            deck = [];
+            for (let d = 0; d < decks; d++) {
+                for (let suit of suits) {
+                    for (let value of values) {
+                        deck.push({value, suit});
+                    }
+                }
+            }
+            shuffleDeck();
+        }
+
+        function shuffleDeck() {
+            for (let i = deck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [deck[i], deck[j]] = [deck[j], deck[i]];
+            }
+            // Reset Hi-Lo count and cards dealt only if a new shoe is created
+            if (deck.length === decks * 52) {
+                hiLoCount = 0;
+                cardsDealt = 0;
+            }
+            updateHiLoCountDisplay();
+        }
+
+        function dealCard(hand) {
+            if (deck.length > 0) {
+                const card = deck.pop();
+                hand.push(card);
+                updateHiLoCount(card);
+                cardsDealt++;
+                
+                // Reshuffle if 75% of the shoe has been used
+                if (cardsDealt / (decks * 52) > 0.75) {
+                    createShoe(decks);
+                }
+            }
+        }
+
+        function updateHiLoCount(card) {
+            const lowCards = ['2', '3', '4', '5', '6'];
+            const highCards = ['10', 'Jack', 'Queen', 'King', 'Ace'];
+            if (lowCards.includes(card.value)) hiLoCount++;
+            else if (highCards.includes(card.value)) hiLoCount--;
+            updateHiLoCountDisplay();
+        }
+
+        function updateHiLoCountDisplay() {
+            document.getElementById('count-display').textContent = `Hi-Lo Count: ${hiLoCount}`;
+        }
+
+        function displayHand(elementId, hand, hideHoleCard = false) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = hand.map((card, index) => {
+                if (hideHoleCard && index === 1 && elementId === 'dealer-hand') {
+                    return `<div class="card back">?</div>`;
+                } else {
+                    return `<div class="card">${card.value} of ${card.suit}</div>`;
+                }
+            }).join('');
+        }
+
+        function calculateScore(hand) {
+            let score = hand.reduce((acc, card) => {
+                if (card.value === 'Ace') return acc + 11;
+                else if (['Jack', 'Queen', 'King'].includes(card.value)) return acc + 10;
+                return acc + (parseInt(card.value) || 0);
+            }, 0);
+            
+            // Adjust for Aces
+            let aces = hand.filter(card => card.value === 'Ace').length;
+            while (score > 21 && aces > 0) {
+                score -= 10;
+                aces--;
+            }
+            return score;
+        }
+        // Placing Bets
+document.getElementById('place-bet-button').addEventListener('click', function() {
+    const betAmount = parseInt(document.getElementById('bet-amount').value);
+    if (betAmount > 0 && betAmount <= bankroll) {
+        currentBet = betAmount;
+        bankroll -= currentBet;
+        document.getElementById('bankroll-display').textContent = `Bankroll: $${bankroll}`;
+        document.getElementById('deal-button').disabled = false;
+    } else {
+        alert("Invalid bet amount.");
+    }
+});
+
+// Dealing Cards
+document.getElementById('deal-button').addEventListener('click', function() {
+    gameState = "playing";
+    playerHand = [];
+    dealerHand = [];
+    dealCard(playerHand);
+    dealCard(dealerHand);
+    dealCard(playerHand);
+    dealCard(dealerHand);
+    displayHand('player-hand', playerHand);
+    displayHand('dealer-hand', dealerHand, true); // Hide dealer's second card
+    document.getElementById('hit-button').disabled = false;
+    document.getElementById('stand-button').disabled = false;
+    document.getElementById('double-down-button').disabled = playerHand.length !== 2 || currentBet > bankroll;
+    document.getElementById('split-button').disabled = playerHand[0].value !== playerHand[1].value || playerHand.length !== 2 || currentBet > bankroll;
+    document.getElementById('deal-button').disabled = true;
+});
+
+// Player Hits
+document.getElementById('hit-button').addEventListener('click', function() {
+    if (gameState === "playing") {
+        dealCard(playerHand);
+        displayHand('player-hand', playerHand);
+        if (calculateScore(playerHand) > 21) {
+            endGame("Player busts!");
+        }
+    }
+});
+
+// Player Stands
+document.getElementById('stand-button').addEventListener('click', function() {
+    if (gameState === "playing") {
+        gameState = "dealerTurn";
+        while (calculateScore(dealerHand) < 17) {
+            dealCard(dealerHand);
+        }
+        displayHand('dealer-hand', dealerHand, false); // Show dealer's second card
+        endGame();
+    }
+});
+
+// Player Doubles Down
+document.getElementById('double-down-button').addEventListener('click', function() {
+    if (gameState === "playing" && bankroll >= currentBet) {
+        bankroll -= currentBet;
+        currentBet *= 2;
+        dealCard(playerHand);
+        displayHand('player-hand', playerHand);
+        if (calculateScore(playerHand) <= 21) {
+            document.getElementById('stand-button').click(); // Automatically stand after doubling down
+        } else {
+            endGame("Player busts!");
+        }
+    }
+});
+
+// Player Splits - Placeholder for future implementation
+
+// End Game Logic
+function endGame(message = "") {
+    let playerScore = calculateScore(playerHand);
+    let dealerScore = calculateScore(dealerHand);
+    gameState = "ended";
+    
+    if (!message) {
+        if (playerScore > 21) {
+            message = "Player busts!";
+        } else if (dealerScore > 21 || playerScore > dealerScore) {
+            message = "Player wins!";
+            bankroll += currentBet * 2;
+        } else if (dealerScore > playerScore) {
+            message = "Dealer wins.";
+        } else {
+            message = "Push.";
+            bankroll += currentBet;
+        }
+    }
+    
+    document.getElementById('status-message').textContent = message;
+    document.getElementById('bankroll-display').textContent = `Bankroll: $${bankroll}`;
+    document.getElementById('restart-button').style.display = "block";
+    document.getElementById('deal-button').disabled = true;
+    document.getElementById('hit-button').disabled = true;
+    document.getElementById('stand-button').disabled = true;
+    document.getElementById('double-down-button').disabled = true;
+    document.getElementById('split-button').disabled = true;
+}
+
+// Restart Game
+document.getElementById('restart-button').addEventListener('click', function() {
+    gameState = "placingBet";
+    playerHand = [];
+    dealerHand = [];
+    currentBet = 0;
+    updateHiLoCountDisplay();
+    document.getElementById('bankroll-display').textContent = `Bankroll: $${bankroll}`;
+    document.getElementById('status-message').textContent = "";
+    document.getElementById('deal-button').disabled = true;
+    document.getElementById('hit-button').disabled = true;
+    document.getElementById('stand-button').disabled = true;
+    document.getElementById('double-down-button').disabled = true;
+    document.getElementById('split-button').disabled = true;
+    document.getElementById('restart-button').style.display = "none";
+    document.getElementById('place-bet-button').disabled = false;
+    document.getElementById('bet-amount').disabled = false;
+    displayHand('dealer-hand', []);
+    displayHand('player-hand', []);
+});
+
+        createShoe(decks); // Initialize the game with a 6-deck shoe
+    </script>
+</body>
+</html>
