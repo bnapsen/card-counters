@@ -197,6 +197,9 @@ document.getElementById('deal-button').addEventListener('click', function() {
     dealCard(dealerHand);
     displayHand('player-hand', playerHand);
     displayHand('dealer-hand', dealerHand, true); // Hide dealer's second card
+    if (calculateScore(playerHand) == 21) {
+        endGame("Black Jack!");
+    }
     document.getElementById('hit-button').disabled = false;
     document.getElementById('stand-button').disabled = false;
     document.getElementById('double-down-button').disabled = playerHand.length !== 2 || currentBet > bankroll;
