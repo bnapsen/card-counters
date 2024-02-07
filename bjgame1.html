@@ -198,7 +198,10 @@ document.getElementById('deal-button').addEventListener('click', function() {
     displayHand('player-hand', playerHand);
     displayHand('dealer-hand', dealerHand, true); // Hide dealer's second card
     if (calculateScore(playerHand) == 21) {
-        endGame("Black Jack!");
+        gameState = "ended";
+        message = "Blackjack!";
+        document.getElementById('status-message').textContent = message;
+        bankroll += currentBet * 2.5;
     }
     document.getElementById('hit-button').disabled = false;
     document.getElementById('stand-button').disabled = false;
@@ -256,9 +259,6 @@ function endGame(message = "") {
     if (!message) {
         if (playerScore > 21) {
             message = "Player busts!";
-        } else if (playerScore == 21) {
-            message = "Blackjack!";
-            bankroll += currentBet * 2.5;
         } else if (dealerScore > 21 || playerScore > dealerScore) {
             message = "Player wins!";
             bankroll += currentBet * 2;
