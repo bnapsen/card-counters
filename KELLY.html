@@ -8,6 +8,33 @@
             margin: 20px;
             padding: 20px;
         }
+        header {
+            background-color: ;
+            color: #20c3dd;
+            padding: 1rem;
+            text-align: center; /* Add this line to center the navigation links */
+        }
+        
+        header nav ul {
+            list-style: none;
+            padding-left: 0;
+            display: inline-block; /* Add this line to make the unordered list inline with the centered text */
+        }
+        
+        header nav ul li {
+            display: inline;
+            margin-right: 1rem;
+        }
+        
+        /* Change the color of navigation links */
+        header nav ul li a {
+            color: #20c3dd; /* Change the color to black */
+        }
+        
+        header nav ul li a:hover {
+            color: #333; /* Change the hover color */
+            text-decoration: underline;
+        }
         .container {
             max-width: 600px;
             margin: auto;
@@ -43,6 +70,20 @@
     </style>
 </head>
 <body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="book.html">Book</a></li>
+                <li><a href="videos.html">Videos</a></li>
+                <li><a href="tools.html">Tools &amp; Resources</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="KELLY.html">Optimal bet calculator</a></li>
+                <li><a href="blackjacktriva.html">Card Counting Triva Game</a></li>
+                <li><a href="bjgame1.html">Blackjack Game</a></li>
+            </ul>
+        </nav>
+    </header>
     <div class="container">
         <h2>Kelly Criterion Bet Calculator</h2>
         <div class="input-group">
