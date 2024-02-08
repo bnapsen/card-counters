@@ -55,19 +55,51 @@
             margin-bottom: 20px;
         }
         .card {
-            background-color: #FFFFFF;
-            color: #333;
-            border-radius: 10px;
-            margin: 5px;
-            padding: 10px;
-            display: inline-block;
-            width: 80px;
-            height: 120px;
-            line-height: 120px;
-            text-align: top;
-            position: relative;
-            font-size: 10px;
-        }
+    background-color: #FFFFFF;
+    color: #333;
+    border-radius: 10px;
+    margin: 5px;
+    padding: 10px;
+    display: inline-block;
+    width: 100px; /* Increased width */
+    height: 150px; /* Increased height */
+    font-size: 16px;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Optional: adds shadow for depth */
+}
+
+.card .number {
+    font-size: 28px; /* Larger font size for the number */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.card .suit {
+    font-size: 20px; /* Adjust based on your preference */
+    position: absolute;
+}
+
+.card .suit.top-left {
+    top: 5px;
+    left: 5px;
+}
+
+.card .suit.top-right {
+    top: 5px;
+    right: 5px;
+}
+
+.card .suit.bottom-left {
+    bottom: 5px;
+    left: 5px;
+}
+
+.card .suit.bottom-right {
+    bottom: 5px;
+    right: 5px;
+}
         .card.back {
             background-color: #666;
         }
@@ -186,17 +218,22 @@
             document.getElementById('count-display').textContent = `Hi-Lo Count: ${hiLoCount}`;
         }
 
-        function displayHand(elementId, hand, hideHoleCard = false) {
-            const element = document.getElementById(elementId);
-            element.innerHTML = hand.map((card, index) => {
-                if (hideHoleCard && index === 1 && elementId === 'dealer-hand') {
-                    return `<div class="card back">?</div>`;
-                } else {
-                    return `<div class="card">${card.value} of ${card.suit}</div>`;
-                }
-            }).join('');
+       function displayHand(elementId, hand, hideHoleCard = false) {
+    const element = document.getElementById(elementId);
+    element.innerHTML = hand.map((card, index) => {
+        if (hideHoleCard && index === 1 && elementId === 'dealer-hand') {
+            return `<div class="card back">?</div>`;
+        } else {
+            return `<div class="card">
+                        <div class="suit top-left">${card.suit}</div>
+                        <div class="suit top-right">${card.suit}</div>
+                        <div class="number">${card.value}</div>
+                        <div class="suit bottom-left">${card.suit}</div>
+                        <div class="suit bottom-right">${card.suit}</div>
+                    </div>`;
         }
-
+    }).join('');
+       }
         function calculateScore(hand) {
             let score = hand.reduce((acc, card) => {
                 if (card.value === 'Ace') return acc + 11;
