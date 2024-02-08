@@ -14,28 +14,36 @@
         color: #fff;
     }
     header {
-        background-color: ;
-        color: #20c3ee;
-        padding: 2rem;
-        text-align: center; /* Add this line to center the navigation links */
+        background-color: rgba(0, 0, 0, 0.8);
+        color: #fff;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        padding: 10px 0;
     }
-    header nav ul {
+    
+    nav ul {
         list-style: none;
-        padding-left: 0;
-        display: inline-block; /* Add this line to make the unordered list inline with the centered text */
+        display: flex;
+        justify-content: center;
+        padding: 10px;
     }
-    header nav ul li {
-        display: inline;
-        margin-right: 1rem;
+    
+    nav ul li {
+        margin: 0 20px;
     }
-    /* Change the color of navigation links */
-    header nav ul li a {
-        color: #20c3dd; /* Change the color to black */
+    
+    nav ul li a {
+        color: #fff;
+        text-decoration: none;
+        transition: color 0.3s ease, transform 0.3s ease;
     }
-    header nav ul li a:hover {
-        color: #333; /* Change the hover color */
-        text-decoration: underline;
+    
+    nav ul li a:hover {
+        color: #4CAF50;
+        transform: scale(1.05);
     }
+
     .container { 
         max-width: 800px; 
         margin: 20px auto; 
