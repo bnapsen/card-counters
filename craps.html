@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Craps Game with Betting Options</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 20px;
+            background-image: url('crapsbg.webp'); /* Ensure you replace this with the actual path */
+            background-size: cover;
+            color: #fff;
+        }
+        .container {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        #gameStatus, #pointValue, #bankroll {
+            font-size: 20px;
+            margin: 20px;
+        }
+        button {
+            font-size: 16px;
+            padding: 10px;
+            margin-top: 10px;
+            color: #000;
+        }
+        input[type="number"] {
+            padding: 5px;
+            width: 100px;
+        }
+        .bet-option {
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Craps Game</h2>
+        <div id="gameStatus">Place your bet and choose an option before rolling.</div>
+        <div id="pointValue"></div>
+        <div id="bankroll">Bankroll: $1000</div>
+        <input type="number" id="betAmount" value="100" min="1">
+        <div class="bet-option">
+            <input type="radio" id="pass" name="betType" value="Pass" checked>
+            <label for="pass">Pass Line</label>
+            <input type="radio" id="dontPass" name="betType" value="DontPass">
+            <label for="dontPass">Don't Pass Bar</label>
+        </div>
+        <button onclick="rollDice()">Roll Dice</button>
+    </div>
+
+    <script>
+        let point = 0; // Point set to 0 initially
+        let bankroll = 1000; // Starting bankroll
+
+        function updateBankroll(amount) {
+            bankroll += amount;
+            document.getElementById('bankroll').innerHTML = `Bankroll: $${bankroll}`;
+        }
+
+        function getSelectedBetType() {
+            const radios = document.getElementsByName('betType');
+            for (let i = 0; i < radios.length; i++) {
+                if (radios[i].checked) {
+                    return radios[i].value;
+                }
+            }
+        }
+
+        function rollDice() {
+            const betType = getSelectedBetType();
+            const bet = parseInt(document.getElementById('betAmount').value, 10);
+            if (bet > bankroll) {
+                alert("You don't have enough money to place this bet.");
+                return;
+            }
+
+            const dice1 = Math.floor(Math.random() * 6) + 1;
+            const dice2 = Math.floor(Math.random() * 6) + 1;
+            const sum = dice1 + dice2;
+
+            document.getElementById('gameStatus').innerHTML = `You rolled ${dice1} + ${dice2} = ${sum}.`;
+
+            // Handle Pass Line bet
+            if (betType === "Pass") {
+                if (point === 0) {
+                    if (sum === 7 || sum === 11) {
+                        document.getElementById('gameStatus').innerHTML += ' You win!';
+                        updateBankroll(bet);
+                    } else if (sum === 2 || sum === 3 || sum === 12) {
+                        document.getElementById('gameStatus').innerHTML += ' Craps, you lose!';
+                        updateBankroll(-bet);
+                    } else {
+                        point = sum;
+                        document.getElementById('pointValue').innerHTML = `Your point is ${point}. Roll again to match your point and win, or roll a 7 and lose.`;
+                    }
+                } else {
+                    if (sum === point) {
+                        document.getElementById('gameStatus').innerHTML += ' You matched your point. You win!';
+                        updateBankroll(bet * 2);
+                        point = 0;
+                        document.getElementById('pointValue').innerHTML = '';
+                    } else if (sum === 7) {
+                        document.getElementById('gameStatus').innerHTML += ' You rolled a 7. You lose!';
+                        updateBankroll(-bet);
+                        point = 0;
+                        document.getElementById('pointValue').innerHTML = '';
+                    }
+                }
+            }
+
+            // Handle Don't Pass Bar bet
+            else if (betType === "DontPass") {
+                if (point === 0) {
+                    if (sum === 2 || sum === 3) {
+                        document.getElementById('gameStatus').innerHTML += ' You win!';
+                        updateBankroll(bet);
+                    } else if (sum === 7 || sum === 11) {
+                        document.getElementById('gameStatus').innerHTML += ' You lose!';
+                        updateBankroll(-bet);
+                    } else if (sum === 12) {
+                        document.getElementById('gameStatus').innerHTML += ' Push. No one wins.';
+                        // No changes to bankroll
+                    } else {
+                        point = sum;
+                        document.getElementById('pointValue').innerHTML = `Your point is ${point}. Roll a 7 before the point to win.`;
+                    }
+                } else {
+                    if (sum === 7) {
+                        document.getElementById('gameStatus').innerHTML += ' You rolled a 7. You win!';
+                        updateBankroll(bet * 2);
+                        point = 0;
+                        document.getElementById('pointValue').innerHTML = '';
+                    } else if (sum === point) {
+                        document.getElementById('gameStatus').innerHTML += ' The point was matched. You lose!';
+                        updateBankroll(-bet);
+                        point = 0;
+                        document.getElementById('pointValue').innerHTML = '';
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
