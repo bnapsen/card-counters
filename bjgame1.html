@@ -5,71 +5,73 @@
     <title>Complete Blackjack Game</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #00796B;
-            color: #FFFFFF;
-            text-align: center;
-            margin: 0;
-            padding: 20px;
-            background-image: url('bgimi.webp'); /* Update with your image path */
-            background-size: cover;
-            background-position: center;
-        }
-        header {
-            background-color: ;
-            color: #20c3dd;
-            padding: 1rem;
-            text-align: center; /* Add this line to center the navigation links */
-        }
-    
-        header nav ul {
-            list-style: none;
-            padding-left: 0;
-            display: inline-block; /* Add this line to make the unordered list inline with the centered text */
-        }
-    
-        header nav ul li {
-            display: inline;
-            margin-right: 1rem;
-        }
-    
-        /* Change the color of navigation links */
-        header nav ul li a {
-            color: #20c3dd; /* Change the color to black */
-        }
-    
-        header nav ul li a:hover {
-            color: #333; /* Change the hover color */
-            text-decoration: underline;
-        }
-        .game-area {
-            background: rgba(0, 0, 0, 0.75);
-            padding: 20px;
-            border-radius: 10px;
-            max-width: 800px;
-            margin: 20px auto;
-        }
-        .hand {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-        .card {
+    font-family: 'Arial', sans-serif;
+    background-color: #00796B;
+    color: #FFFFFF;
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+    background-image: url('bgimi.webp'); /* Update with your image path */
+    background-size: cover;
+    background-position: center;
+}
+
+header {
+    color: #20c3dd;
+    padding: 1rem;
+    text-align: center;
+}
+
+header nav ul {
+    list-style: none;
+    padding-left: 0;
+    display: inline-block;
+}
+
+header nav ul li {
+    display: inline;
+    margin-right: 1rem;
+}
+
+header nav ul li a {
+    color: #20c3dd;
+}
+
+header nav ul li a:hover {
+    color: #333;
+    text-decoration: underline;
+}
+
+.game-area {
+    background: rgba(0, 0, 0, 0.75);
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 800px;
+    margin: 20px auto;
+}
+
+.hand {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.card {
     background-color: #FFFFFF;
     color: #333;
     border-radius: 10px;
     margin: 5px;
     padding: 10px;
     display: inline-block;
-    width: 100px; /* Increased width */
-    height: 150px; /* Increased height */
+    width: 100px;
+    height: 150px;
     font-size: 16px;
     position: relative;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Optional: adds shadow for depth */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 .card .number {
-    font-size: 28px; /* Larger font size for the number */
+    font-size: 28px;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -77,51 +79,101 @@
 }
 
 .card .suit {
-    font-size: 20px; /* Adjust based on your preference */
+    font-size: 20px;
     position: absolute;
 }
 
-.card .suit.top-left {
-    top: 5px;
+.card .suit.top-left,
+.card .suit.bottom-left {
     left: 5px;
 }
 
+.card .suit.top-right,
+.card .suit.bottom-right {
+    right: 5px;
+}
+
+.card .suit.top-left,
 .card .suit.top-right {
     top: 5px;
-    right: 5px;
 }
 
-.card .suit.bottom-left {
-    bottom: 5px;
-    left: 5px;
-}
-
+.card .suit.bottom-left,
 .card .suit.bottom-right {
     bottom: 5px;
-    right: 5px;
 }
-        .card.back {
-            background-color: #666;
-        }
-        .controls button {
-            background-color: #FFC107;
-            border: none;
-            border-radius: 5px;
-            padding: 10px 15px;
-            margin: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .controls button:disabled {
-            background-color: #BDBDBD;
-            cursor: not-allowed;
-        }
-        .betting-controls, .count-display {
-            margin-bottom: 40px;
-        }
-        .count-display {
-            font-size: 20px;
-        }
+
+.card.back {
+    background-color: #666;
+}
+
+.controls button {
+    background-color: #FFC107;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    margin: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.controls button:disabled {
+    background-color: #BDBDBD;
+    cursor: not-allowed;
+}
+
+.betting-controls, .count-display {
+    margin-bottom: 40px;
+}
+
+.betting-controls {
+    background: rgba(0,0,0,0.2);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.count-display {
+    font-size: 20px;
+}
+
+#bankroll-display {
+    background-color: #424242;
+    color: #FFEB3B;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    display: inline-block;
+    font-size: 18px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+#place-bet-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 24px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#place-bet-button:hover {
+    background-color: #388E3C;
+}
+
+#bet-amount {
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #4CAF50;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #333;
+}
     </style>
 </head>
 <body>
