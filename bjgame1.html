@@ -17,29 +17,34 @@
 }
 
 header {
-    color: #20c3dd;
-    padding: 1rem;
-    text-align: center;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding: 10px 0;
 }
 
-header nav ul {
+nav ul {
     list-style: none;
-    padding-left: 0;
-    display: inline-block;
+    display: flex;
+    justify-content: center;
+    padding: 10px;
 }
 
-header nav ul li {
-    display: inline;
-    margin-right: 1rem;
+nav ul li {
+    margin: 0 20px;
 }
 
-header nav ul li a {
-    color: #20c3dd;
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s ease, transform 0.3s ease;
 }
 
-header nav ul li a:hover {
-    color: #333;
-    text-decoration: underline;
+nav ul li a:hover {
+    color: #4CAF50;
+    transform: scale(1.05);
 }
 
 .game-area {
