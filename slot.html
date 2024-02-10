@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enhanced Emoji Slot Machine with Sounds and Background</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-image: url('bgslots.webp'); /* Replace with your image URL */
+  background-size: cover;
+}
+
+.slot-machine {
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  padding: 40px; /* Increased padding */
+  font-size: 3em; /* Increased font size for larger area */
+}
+
+.reels {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px; /* Increased margin */
+}
+
+.reel {
+  padding: 0 20px; /* Increased padding */
+  border: 2px solid #ddd; /* Adjusted for visual balance */
+  border-radius: 10px; /* Increased for aesthetic */
+  width: 100px; /* Increased width */
+  height: 100px; /* Increased height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2em; /* Adjust font size here if needed */
+}
+
+button {
+  font-size: 1.2em; /* Increased font size */
+  padding: 15px 30px; /* Increased padding */
+}
+
+#bankroll, #betAmount {
+  font-size: 1.4em; /* Increased font size */
+}
+</style>
+</head>
+<body>
+<div id="slotMachine" class="slot-machine">
+  <div id="reels" class="reels">
+    <div class="reel" id="reel1">🍒</div>
+    <div class="reel" id="reel2">🍒</div>
+    <div class="reel" id="reel3">🍒</div>
+  </div>
+  <div id="bankroll">Bankroll: $100</div>
+  <div>
+    <button id="spinButton">Spin</button>
+    <select id="betAmount">
+      <option value="10">$10</option>
+      <option value="20">$20</option>
+      <option value="50">$50</option>
+    </select>
+  </div>
+  <div id="message"></div>
+</div>
+<audio id="spinSound" src="spin.mp3" preload="auto"></audio> <!-- Replace with your spin sound URL -->
+<audio id="winSound" src="win.mp3" preload="auto"></audio> <!-- Replace with your win sound URL -->
+
+<script>
+const reel1 = document.getElementById('reel1');
+const reel2 = document.getElementById('reel2');
+const reel3 = document.getElementById('reel3');
+const spinButton = document.getElementById('spinButton');
+const bankrollElement = document.getElementById('bankroll');
+const betAmountElement = document.getElementById('betAmount');
+const messageElement = document.getElementById('message');
+const spinSound = document.getElementById('spinSound');
+const winSound = document.getElementById('winSound');
+let bankroll = 100;
+
+const emojis = ['🍒', '🍋', '🍉', '⭐', '🍇', '7️⃣'];
+
+function spinReel() {
+  return emojis[Math.floor(Math.random() * emojis.length)];
+}
+
+function updateBankroll(amount) {
+  bankroll += amount;
+  bankrollElement.textContent = `Bankroll: $${bankroll}`;
+  messageElement.textContent = amount >= 0 ? `You won $${amount}!` : `You lost $${-amount}.`;
+  if (bankroll <= 0) {
+    bankroll = 0;
+    spinButton.disabled = true;
+    messageElement.textContent = "Game over! Reload the page to play again.";
+  }
+}
+
+spinButton.addEventListener('click', () => {
+  const bet = parseInt(betAmountElement.value);
+  if (bankroll < bet) {
+    messageElement.textContent = "Not enough bankroll to place bet.";
+    return;
+  }
+  spinSound.play(); // Play spin sound
+  updateBankroll(-bet);
+
+  reel1.textContent = spinReel();
+  reel2.textContent = spinReel();
+  reel3.textContent = spinReel();
+
+  if (reel1.textContent === reel2.textContent && reel2.textContent === reel3.textContent) {
+    winSound.play(); // Play win sound if the player wins
+    updateBankroll(bet * 10); // Big win
+  } else if (reel1.textContent === reel2.textContent || reel2.textContent === reel3.textContent || reel1.textContent === reel3.textContent) {
+    updateBankroll(bet * 2); // Small win
+  } else {
+    messageElement.textContent = `No win. Try again!`;
+  }
+});
+</script>
+</body>
+</html>
