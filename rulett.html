@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Roulette Game with Bankroll</title>
+    <style>
+      body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-image: url('rulettbg.webp'); /* Set your background image here */
+            background-size: cover;
+        }
+         #roulette-container {
+            margin: 20px;
+            background: rgba(255, 255, 255, 0.8); /* Semi-transparent background for visibility */
+            padding: 20px;
+            border-radius: 10px;
+        }
+        #betting-area, #number-betting-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        .bet-option, .number-option {
+            padding: 5px 10px;
+            border: 1px solid #000;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .bet-option.active {
+            background-color: #add8e6;
+        }
+        #spin-button {
+            padding: 10px 20px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+         #status, #bankroll {
+            margin-top: 20px;
+            color: #fff; /* Ensure text is visible on background */
+        }
+    </style>
+</head>
+<body>
+
+<div id="roulette-container">
+    <canvas id="roulette-wheel" width="200" height="200"></canvas>
+</div>
+
+<div id="betting-area">
+    <div class="bet-option" data-bet="red">Red</div>
+    <div class="bet-option" data-bet="black">Black</div>
+</div>
+
+<button id="spin-button">Spin</button>
+<div id="status"></div>
+<div id="bankroll">Bankroll: $1000</div>
+
+<script>
+    let currentBet = '';
+    let bankroll = 1000;
+    let betAmount = 100; // Fixed bet amount for simplicity, could be made variable
+
+    const updateBankrollDisplay = () => {
+        document.getElementById('bankroll').textContent = `Bankroll: $${bankroll}`;
+    };
+
+    document.querySelectorAll('.bet-option').forEach(option => {
+        option.addEventListener('click', function() {
+            if (bankroll < betAmount) {
+                alert('Not enough funds to place a bet.');
+                return;
+            }
+            document.querySelectorAll('.bet-option').forEach(o => o.classList.remove('active'));
+            this.classList.add('active');
+            currentBet = this.getAttribute('data-bet');
+            document.getElementById('status').textContent = `You bet $${betAmount} on ${currentBet}.`;
+        });
+    });
+
+    const spinWheel = () => {
+        if (!currentBet) {
+            alert('Please select a bet.');
+            return;
+        }
+        if (bankroll < betAmount) {
+            alert('Not enough funds to place a bet.');
+            return;
+        }
+
+        bankroll -= betAmount; // Deduct bet amount from bankroll
+        const result = Math.random() < 0.5 ? 'red' : 'black';
+
+        if (result === currentBet) {
+            document.getElementById('status').textContent = `The ball landed on ${result}. You win!`;
+            bankroll += betAmount * 2; // Winner gets double the bet amount
+        } else {
+            document.getElementById('status').textContent = `The ball landed on ${result}. You lose!`;
+        }
+
+        updateBankrollDisplay();
+
+        // Reset bet selection
+        document.querySelectorAll('.bet-option').forEach(o => o.classList.remove('active'));
+        currentBet = '';
+    };
+
+    document.getElementById('spin-button').addEventListener('click', spinWheel);
+
+    // Basic drawing of the roulette wheel
+    const drawWheel = () => {
+        const wheel = document.getElementById('roulette-wheel');
+        const ctx = wheel.getContext('2d');
+        ctx.fillStyle = 'grey';
+        ctx.beginPath();
+        ctx.arc(100, 100, 90, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = 'black';
+        ctx.beginPath();
+        ctx.arc(100, 100, 80, 0, Math.PI * 2, true);
+        ctx.fill();
+
+        ctx.fillStyle = 'red';
+        ctx.beginPath();
+        ctx.arc(100, 100, 70, 0, Math.PI * 2, true);
+        ctx.fill();
+    };
+
+    drawWheel();
+    updateBankrollDisplay();
+</script>
+
+</body>
+</html>
